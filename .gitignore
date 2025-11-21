@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+rag_agent_env/
+cs_ai_env/
+
+# Environment Variables
+.env
+*.env
+
+# IDE Settings
+.vscode/
+.idea/
+
+# Byte-compiled files
+*.pyc
+*.pyo
+
+# FastAPI / Uvicorn logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+.pytest_cache/
+
+# Chroma / Vector DB local storage
+chroma/
+chromadb/
+vector_store/
+
+# Uploads / temp files
+uploads/
+temp/
