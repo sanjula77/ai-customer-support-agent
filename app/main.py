@@ -1,17 +1,194 @@
-# Entry point for the customer support AI application
+"""
+Main FastAPI application for NeuraHome AI Customer Support.
 
-from fastapi import FastAPI
-from app.api.routes import router as api_router
+This is the entry point for the customer support AI application.
+It provides REST API endpoints for querying the RAG system.
+"""
 
+import os
+import sys
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Add project root to Python path for imports
+# This allows the script to be run directly: python app/main.py
+project_root = Path(__file__).parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+# Load environment variables
+load_dotenv()
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict
+
+# Import API routes
+try:
+    from app.api.routes import router as api_router
+except ImportError:
+    # Fallback if app module structure doesn't work
+    from api.routes import router as api_router
+
+# Import RAG query engine
+try:
+    from app.rag.query_engine import ask_question, ask_question_with_sources
+except ImportError:
+    # Fallback for direct execution
+    from rag.query_engine import ask_question, ask_question_with_sources
+
+
+# Initialize FastAPI app
 app = FastAPI(
-    title="AI Customer Support Agent",
-    version="1.0.0"
+    title="NeuraHome AI Customer Support",
+    description="AI-powered customer support system using RAG (Retrieval-Augmented Generation)",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include API routes
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api", tags=["api"])
 
-@app.get("/health")
+
+# Request/Response models
+class QuestionRequest(BaseModel):
+    """Request model for asking a question."""
+    question: str = Field(..., description="The question to ask", min_length=1, max_length=1000)
+    k: Optional[int] = Field(5, description="Number of context chunks to retrieve", ge=1, le=20)
+    include_sources: Optional[bool] = Field(False, description="Whether to include source information")
+
+
+class SourceInfo(BaseModel):
+    """Source information model."""
+    title: str
+    score: float
+    category: Optional[str] = None
+    source_file: Optional[str] = None
+    section: Optional[str] = None
+
+
+class AnswerResponse(BaseModel):
+    """Response model for answer."""
+    answer: str
+    sources: Optional[List[SourceInfo]] = None
+
+
+class HealthResponse(BaseModel):
+    """Health check response model."""
+    status: str
+    message: str
+    api_key_configured: bool
+
+
+# API Endpoints
+@app.get("/", tags=["root"])
+def root():
+    """Root endpoint."""
+    return {
+        "message": "NeuraHome AI Customer Support API is running!",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+
+@app.get("/health", response_model=HealthResponse, tags=["health"])
 def health_check():
-    return {"status": "ok"}
+    """Health check endpoint."""
+    api_key_configured = bool(os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY"))
+    
+    return HealthResponse(
+        status="ok",
+        message="Service is healthy" if api_key_configured else "Service is running but API key not configured",
+        api_key_configured=api_key_configured
+    )
 
+
+@app.post("/ask", response_model=AnswerResponse, tags=["query"])
+def ask(request: QuestionRequest):
+    """
+    Ask a question to the RAG system.
+    
+    Args:
+        request: QuestionRequest with question and optional parameters
+        
+    Returns:
+        AnswerResponse with answer and optionally sources
+        
+    Raises:
+        HTTPException: If query processing fails
+    """
+    try:
+        if request.include_sources:
+            result = ask_question_with_sources(request.question, k=request.k, verbose=False)
+            
+            # Convert sources to SourceInfo models
+            sources = None
+            if result.get('sources'):
+                sources = [
+                    SourceInfo(
+                        title=src.get('title', ''),
+                        score=src.get('score', 0.0),
+                        category=src.get('category'),
+                        source_file=src.get('source_file'),
+                        section=src.get('section')
+                    )
+                    for src in result['sources']
+                ]
+            
+            return AnswerResponse(
+                answer=result['answer'],
+                sources=sources
+            )
+        else:
+            answer = ask_question(request.question, k=request.k, verbose=False)
+            return AnswerResponse(answer=answer)
+            
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing question: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+
+
+@app.get("/ask", tags=["query"])
+def ask_get(question: str, k: int = 5):
+    """
+    Ask a question via GET request (for simple testing).
+    
+    Args:
+        question: The question to ask
+        k: Number of context chunks to retrieve
+        
+    Returns:
+        AnswerResponse with answer
+    """
+    try:
+        answer = ask_question(question, k=k, verbose=False)
+        return AnswerResponse(answer=answer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    # Run the application
+    # Use __name__ to work when run directly or as module
+    uvicorn.run(
+        app,  # Pass app directly instead of string
+        host="0.0.0.0",
+        port=8000,
+        reload=False  # Disable reload when running directly
+    )
