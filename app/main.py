@@ -24,12 +24,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 
-# Import API routes
+# Import routers
 try:
     from app.api.routes import router as api_router
 except ImportError:
     # Fallback if app module structure doesn't work
     from api.routes import router as api_router
+
+try:
+    from app.routes.chat_router import router as chat_router
+except ImportError:
+    from routes.chat_router import router as chat_router
 
 # Import RAG query engine
 try:
@@ -59,6 +64,7 @@ app.add_middleware(
 
 # Include API routes
 app.include_router(api_router, prefix="/api", tags=["api"])
+app.include_router(chat_router, prefix="/chat", tags=["chat"])
 
 
 # Request/Response models
