@@ -19,22 +19,21 @@ if str(project_root) not in sys.path:
 # Load environment variables
 load_dotenv()
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict
 
-# Import routers
-try:
-    from app.api.routes import router as api_router
-except ImportError:
-    # Fallback if app module structure doesn't work
-    from api.routes import router as api_router
+# Import routers (use absolute package paths only to avoid reload issues)
+from app.api.routes import router as api_router
+from app.routes.chat_router import router as chat_router
 
 try:
-    from app.routes.chat_router import router as chat_router
-except ImportError:
-    from routes.chat_router import router as chat_router
+    from app.api.ask import router as agent_router
+except ImportError as e:
+    import sys
+    print(f"Warning: Could not import agent router: {e}", file=sys.stderr)
+    agent_router = None
 
 # Import RAG query engine
 try:
@@ -65,6 +64,10 @@ app.add_middleware(
 # Include API routes
 app.include_router(api_router, prefix="/api", tags=["api"])
 app.include_router(chat_router, prefix="/chat", tags=["chat"])
+
+# Include agent router if available
+if agent_router:
+    app.include_router(agent_router, prefix="/agent", tags=["agent"])
 
 
 # Request/Response models
@@ -121,9 +124,13 @@ def health_check():
 
 
 @app.post("/ask", response_model=AnswerResponse, tags=["query"])
-def ask(request: QuestionRequest):
+async def ask(request: QuestionRequest):
     """
-    Ask a question to the RAG system.
+    Ask a question - uses intelligent agent that routes to RAG or direct LLM.
+    
+    This endpoint uses the support agent which automatically:
+    - Uses RAG for product-specific questions (manuals, troubleshooting)
+    - Uses direct LLM for general questions (math, general knowledge)
     
     Args:
         request: QuestionRequest with question and optional parameters
@@ -135,12 +142,23 @@ def ask(request: QuestionRequest):
         HTTPException: If query processing fails
     """
     try:
-        if request.include_sources:
-            result = ask_question_with_sources(request.question, k=request.k, verbose=False)
+        # Use agent for intelligent routing (if available)
+        if agent_router:
+            from app.agent.support_agent import get_support_agent
             
-            # Convert sources to SourceInfo models
+            agent = get_support_agent()
+            # Use a default session_id if not provided (for backward compatibility)
+            session_id = f"ask-endpoint-{hash(request.question) % 10000}"
+            
+            result = await agent.process_query(
+                session_id=session_id,
+                message=request.question,
+                k=request.k
+            )
+            
+            # Convert to AnswerResponse format
             sources = None
-            if result.get('sources'):
+            if request.include_sources and result.get('sources'):
                 sources = [
                     SourceInfo(
                         title=src.get('title', ''),
@@ -157,8 +175,31 @@ def ask(request: QuestionRequest):
                 sources=sources
             )
         else:
-            answer = ask_question(request.question, k=request.k, verbose=False)
-            return AnswerResponse(answer=answer)
+            # Fallback to old RAG-only system if agent not available
+            if request.include_sources:
+                result = ask_question_with_sources(request.question, k=request.k, verbose=False)
+                
+                # Convert sources to SourceInfo models
+                sources = None
+                if result.get('sources'):
+                    sources = [
+                        SourceInfo(
+                            title=src.get('title', ''),
+                            score=src.get('score', 0.0),
+                            category=src.get('category'),
+                            source_file=src.get('source_file'),
+                            section=src.get('section')
+                        )
+                        for src in result['sources']
+                    ]
+                
+                return AnswerResponse(
+                    answer=result['answer'],
+                    sources=sources
+                )
+            else:
+                answer = ask_question(request.question, k=request.k, verbose=False)
+                return AnswerResponse(answer=answer)
             
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -169,20 +210,46 @@ def ask(request: QuestionRequest):
 
 
 @app.get("/ask", tags=["query"])
-def ask_get(question: str, k: int = 5):
+async def ask_get(
+    question: str = Query(..., description="The question to ask"),
+    k: int = Query(5, ge=1, le=20, description="Number of context chunks"),
+    session_id: Optional[str] = Query(None, description="Optional session ID for conversation context")
+):
     """
     Ask a question via GET request (for simple testing).
+    Uses intelligent agent that routes to RAG or direct LLM.
     
     Args:
         question: The question to ask
         k: Number of context chunks to retrieve
+        session_id: Optional session ID for conversation memory
         
     Returns:
         AnswerResponse with answer
     """
     try:
-        answer = ask_question(question, k=k, verbose=False)
-        return AnswerResponse(answer=answer)
+        # Use agent for intelligent routing (if available)
+        if agent_router:
+            from app.agent.support_agent import get_support_agent
+            
+            agent = get_support_agent()
+            # Use provided session_id or generate one
+            sid = session_id or f"ask-get-{hash(question) % 10000}"
+            
+            result = await agent.process_query(
+                session_id=sid,
+                message=question,
+                k=k
+            )
+            
+            return AnswerResponse(
+                answer=result['answer'],
+                sources=None  # GET endpoint doesn't return sources by default
+            )
+        else:
+            # Fallback to old RAG-only system
+            answer = ask_question(question, k=k, verbose=False)
+            return AnswerResponse(answer=answer)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

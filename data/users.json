@@ -1,0 +1,14 @@
+[
+  {
+    "user_id": "u001",
+    "name": "Avery Chen",
+    "email": "avery.chen@example.com",
+    "address": "New Street 45"
+  },
+  {
+    "user_id": "u002",
+    "name": "Jordan Smith",
+    "email": "jordan.smith@example.com",
+    "address": "89 Park Avenue, Riverton"
+  }
+]

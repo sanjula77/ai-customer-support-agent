@@ -1,0 +1,9 @@
+[
+  {
+    "ticket_id": "T-001",
+    "issue_type": "delivery_issue",
+    "description": "Package damaged",
+    "user_id": "u001",
+    "status": "open"
+  }
+]

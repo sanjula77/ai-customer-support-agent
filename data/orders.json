@@ -1,0 +1,19 @@
+[
+  {
+    "order_id": "1234",
+    "user_id": "u001",
+    "status": "shipped",
+    "items": ["NeuraHome Hub X1", "Smart Bulb Glow"],
+    "total_price": 349.98,
+    "expected_delivery": "2025-11-21"
+  },
+  {
+    "order_id": "5678",
+    "user_id": "u002",
+    "status": "processing",
+    "items": ["Secure Lock Plus", "Door Sensor"],
+    "total_price": 229.0,
+    "expected_delivery": "2025-11-25"
+  }
+]
+
