@@ -1,4 +1,4 @@
-# NeuraHome AI Customer Support
+<h1 align="center">NeuraHome AI Customer Support</h1>
 
 <div align="center">
 
@@ -7,7 +7,7 @@
 ![Next.js](https://img.shields.io/badge/next.js-16.0.6-black.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-**An intelligent AI-powered customer support system with RAG (Retrieval-Augmented Generation) capabilities**
+**An intelligent AI-powered customer support system with RAG (Retrieval-Augmented Generation) capabilities, powered by LangChain agents**
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [API Reference](#-api-reference)
 
