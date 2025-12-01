@@ -18,6 +18,7 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [Screenshots](#-screenshots)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Architecture](#-architecture)
@@ -46,6 +47,28 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 - **Multi-Tool Support**: Integrates order lookup, ticket creation, and address management
 - **Source Attribution**: Provides citations and source references for transparency
 - **Modern Web Interface**: Beautiful, responsive Next.js frontend
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+### Application Interface
+
+![Screenshot 1](assest/1.png)
+
+*Main chat interface with conversation history*
+
+![Screenshot 2](assest/2.png)
+
+*Interactive features and response display*
+
+![Screenshot 3](assest/3.png)
+
+*Source attribution and tool indicators*
+
+</div>
 
 ---
 
