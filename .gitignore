@@ -41,3 +41,41 @@ vector_store/
 # Uploads / temp files
 uploads/
 temp/
+
+# Next.js / Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+
+# Next.js environment files
+frontend/.env*.local
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Vercel
+frontend/.vercel
+
+# TypeScript
+frontend/*.tsbuildinfo
+
+# ESLint cache
+frontend/.eslintcache
+
+# Testing
+frontend/coverage/
+frontend/.nyc_output/
+
+# Debug logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+frontend/lerna-debug.log*
+
+# Local development
+frontend/.turbo
+frontend/.swc/
