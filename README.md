@@ -9,34 +9,34 @@
 
 **An intelligent AI-powered customer support system with RAG (Retrieval-Augmented Generation) capabilities, powered by LangChain agents**
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Documentation](#-documentation) • [API Reference](#-api-reference)
+[Features](#features) • [Quick Start](#quick-start) • [Documentation](#documentation) • [API Reference](#api-reference)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [Screenshots](#-screenshots)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Running the Application](#-running-the-application)
-- [API Reference](#-api-reference)
-- [Project Structure](#-project-structure)
-- [Environment Variables](#-environment-variables)
-- [Testing](#-testing)
-- [Deployment](#-deployment)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Overview](#overview)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
+- [API Reference](#api-reference)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 🎯 Overview
+## Overview
 
 NeuraHome AI Customer Support is a comprehensive customer support system that leverages advanced AI technologies to provide intelligent, context-aware assistance. The system combines Retrieval-Augmented Generation (RAG) with LangChain agents to deliver accurate responses from product documentation, FAQs, and troubleshooting guides.
 
@@ -50,7 +50,7 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <div align="center">
 
@@ -72,21 +72,21 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Features
 
-- 🤖 **Intelligent Agent System**: LangChain ReAct agent that intelligently routes queries
-- 📚 **RAG-Powered Knowledge Base**: Vector search over product manuals, FAQs, and policies
-- 💬 **Conversational Memory**: Maintains conversation context across sessions
-- 🔍 **Source Attribution**: Shows which documents were used to generate answers
-- 🛠️ **Multi-Tool Integration**: 
+- **Intelligent Agent System**: LangChain ReAct agent that intelligently routes queries
+- **RAG-Powered Knowledge Base**: Vector search over product manuals, FAQs, and policies
+- **Conversational Memory**: Maintains conversation context across sessions
+- **Source Attribution**: Shows which documents were used to generate answers
+- **Multi-Tool Integration**: 
   - Order lookup and tracking
   - Support ticket creation
   - Address management
-- 🎨 **Modern UI**: Clean, responsive chat interface built with Next.js
-- 📊 **Health Monitoring**: Built-in health check endpoints
-- 🔒 **Session Management**: Secure session handling with UUID-based identifiers
+- **Modern UI**: Clean, responsive chat interface built with Next.js
+- **Health Monitoring**: Built-in health check endpoints
+- **Session Management**: Secure session handling with UUID-based identifiers
 
 ### Knowledge Base Coverage
 
@@ -98,7 +98,7 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Backend
 
@@ -126,7 +126,7 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐
@@ -164,7 +164,7 @@ NeuraHome AI Customer Support is a comprehensive customer support system that le
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -176,7 +176,7 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### 1. Clone the Repository
 
@@ -210,7 +210,7 @@ npm install
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Backend Environment Variables
 
@@ -240,7 +240,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ---
 
-## 🏃 Running the Application
+## Running the Application
 
 ### Development Mode
 
@@ -290,7 +290,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ---
 
-## 📡 API Reference
+## API Reference
 
 ### Base URL
 
@@ -388,7 +388,7 @@ Visit `http://localhost:8000/docs` for interactive Swagger UI documentation wher
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 customer_support_ai/
@@ -459,7 +459,7 @@ customer_support_ai/
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 ### Backend
 
@@ -481,7 +481,7 @@ customer_support_ai/
 
 ---
 
-## 🧪 Testing
+## Testing
 
 ### Backend Testing
 
@@ -508,7 +508,7 @@ See the API documentation at `/docs` for detailed endpoint specifications. You c
 
 ---
 
-## 🚢 Deployment
+## Deployment
 
 ### Backend Deployment
 
@@ -542,7 +542,7 @@ See the API documentation at `/docs` for detailed endpoint specifications. You c
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -562,19 +562,19 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-## 📞 Support
+## Support
 
 For issues, questions, or contributions, please open an issue on the GitHub repository.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [LangChain](https://www.langchain.com/) for the agent framework
 - [FastAPI](https://fastapi.tiangolo.com/) for the web framework
@@ -585,6 +585,6 @@ For issues, questions, or contributions, please open an issue on the GitHub repo
 
 <div align="center">
 
-**Built with ❤️ for intelligent customer support**
+**Built with passion for intelligent customer support**
 
 </div>
